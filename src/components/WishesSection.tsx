@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Send, Loader2, Sparkles } from 'lucide-react';
+import { toast } from 'sonner';
+import { submitToSheet } from '../config';
 
 interface Wish {
   id: string;
@@ -30,8 +32,7 @@ export const WishesSection: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      // Simulate network request latency
-      await new Promise(resolve => setTimeout(resolve, 800));
+      await submitToSheet('WISH', { name: formData.name, message: formData.message });
 
       const newWish: Wish = {
         id: Date.now().toString(),
@@ -45,6 +46,7 @@ export const WishesSection: React.FC = () => {
       setFormData({ name: '', message: '' });
     } catch (error) {
       console.error('Error submitting wish: ', error);
+      toast.error('Sorry, we could not save your wish. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

@@ -3,12 +3,10 @@ import { motion, AnimatePresence } from 'motion/react';
 import { X, ZoomIn } from 'lucide-react';
 
 const images = [
-  { id: 1, url: '/images/a.jpg', fallback: 'https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=80&w=800&auto=format&fit=crop', title: 'The Beginning' },
-  { id: 2, url: '/images/b.jpg', fallback: 'https://images.unsplash.com/photo-1522673607200-164d1f624698?q=80&w=800&auto=format&fit=crop', title: 'Our Journey' },
-  { id: 3, url: '/images/c.jpg', fallback: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=800&auto=format&fit=crop', title: 'A Thousand Words' },
-  { id: 4, url: '/images/d.jpg', fallback: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=800&auto=format&fit=crop', title: 'Endless Love' },
-  { id: 5, url: '/images/e.jpg', fallback: 'https://images.unsplash.com/photo-1532712938310-34cb3982ef74?q=80&w=800&auto=format&fit=crop', title: 'Cherished Moments' },
-  { id: 6, url: '/images/f.jpg', fallback: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop', title: 'Together Forever' },
+  { id: 1, url: '/images/couple-1.jpeg', fallback: '/images/couple-1.jpeg', title: 'The Beginning' },
+  { id: 2, url: '/images/couple-2.jpeg', fallback: '/images/couple-2.jpeg', title: 'Our Journey' },
+  { id: 3, url: '/images/couple-1.jpeg', fallback: '/images/couple-1.jpeg', title: 'Endless Love' },
+  { id: 4, url: '/images/couple-2.jpeg', fallback: '/images/couple-2.jpeg', title: 'Together Forever' },
 ];
 
 export const Gallery: React.FC = () => {

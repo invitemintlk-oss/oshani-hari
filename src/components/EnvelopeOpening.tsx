@@ -1,10 +1,12 @@
 import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from 'motion/react';
+import { getGuestFromUrl } from '../guest';
 
 export function EnvelopeOpening({ onComplete, onMusicStart }: { onComplete: () => void, onMusicStart?: () => void }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [showButton, setShowButton] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const guestName = getGuestFromUrl();
 
   const handleStart = () => {
     setShowButton(false);
@@ -41,6 +43,13 @@ export function EnvelopeOpening({ onComplete, onMusicStart }: { onComplete: () =
             className="absolute inset-0 flex flex-col items-center justify-center bg-white/40 backdrop-blur-sm z-10"
           >
             <div className="w-[1px] h-24 bg-gradient-to-b from-transparent to-brand-gold/50 mb-8" />
+            {guestName && (
+              <div className="text-center mb-8 px-6">
+                <p className="font-serif italic text-brand-mocha text-lg sm:text-xl mb-1">Dear</p>
+                <p className="font-display text-3xl sm:text-4xl text-brand-mocha font-semibold" style={{ textShadow: "0 2px 14px rgba(255,255,255,0.95)" }}>{guestName}</p>
+                <p className="font-serif italic text-brand-mocha/90 text-base sm:text-lg mt-2">You are invited to our wedding</p>
+              </div>
+            )}
             <button
               onClick={handleStart}
               className="px-10 py-4 border border-brand-gold/60 bg-white/70 text-brand-mocha font-sans uppercase tracking-[0.4em] text-xs hover:bg-brand-gold hover:text-white transition-all duration-700 rounded-full shadow-[0_0_30px_rgba(197,160,89,0.1)]"

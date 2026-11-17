@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { Sparkles, Heart } from 'lucide-react';
 import { FloatingPetals } from './FloatingPetals';
+import { getGuestFromUrl } from '../guest';
 
 export const Hero: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -9,6 +10,7 @@ export const Hero: React.FC = () => {
   const y1 = useTransform(scrollY, [0, 1000], [0, 400]);
   const scale = useTransform(scrollY, [0, 800], [1, 1.1]);
   const opacity = useTransform(scrollY, [0, 400], [1, 0]);
+  const guestName = getGuestFromUrl();
 
   return (
     <div ref={containerRef} className="relative h-screen flex items-center justify-center overflow-hidden bg-white/50">
@@ -19,13 +21,13 @@ export const Hero: React.FC = () => {
         style={{ y: y1, scale }}
       >
         <img
-          src="/images/a.jpg"
+          src="/images/couple-1.jpeg"
           alt="Oshani and Hari"
           className="w-full h-full object-cover opacity-90"
           style={{ objectPosition: 'center 20%' }}
         />
         {/* Soft elegant gradient overlays to ensure text readability & premium feel */}
-        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/30 to-white/50" />
+        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/55 to-white/65" />
         <div className="absolute inset-0 bg-gradient-to-b from-brand-gold/15 via-transparent to-brand-gold/10 mix-blend-overlay" />
       </motion.div>
 
@@ -82,15 +84,15 @@ export const Hero: React.FC = () => {
             <div className="h-[1px] w-12 sm:w-16 bg-gradient-to-r from-brand-gold/60 to-transparent" />
           </div>
 
-          <span className="text-brand-mocha uppercase tracking-[0.4em] sm:tracking-[0.6em] text-xs sm:text-sm font-medium mb-6 sm:mb-10 block drop-shadow-sm font-sans">
+          <span className="text-brand-mocha uppercase tracking-[0.4em] sm:tracking-[0.6em] text-xs sm:text-sm font-bold mb-6 sm:mb-10 block drop-shadow-[0_1px_6px_rgba(255,255,255,1)] font-sans">
             The Celebration of Love
           </span>
 
           <div className="relative mb-8 sm:mb-12 w-full flex justify-center">
             {/* Soft glow behind text for contrast and magical feel */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[140%] bg-white/40 blur-[50px] sm:blur-[80px] rounded-full pointer-events-none" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[130%] h-[160%] bg-white/80 blur-[40px] sm:blur-[60px] rounded-full pointer-events-none" />
 
-            <h1 className="relative text-6xl sm:text-[7rem] lg:text-[9.5rem] font-display text-brand-mocha leading-[1.1] sm:leading-[0.9] drop-shadow-sm">
+            <h1 className="relative text-6xl sm:text-[7rem] lg:text-[9.5rem] font-display text-brand-mocha leading-[1.1] sm:leading-[0.9] font-semibold" style={{ textShadow: "0 2px 18px rgba(255,255,255,0.95), 0 0 4px rgba(255,255,255,0.9)" }}>
               Oshani <br className="sm:hidden" />
               <span className="text-brand-gold italic font-light mx-2 sm:mx-6 text-5xl sm:text-[6rem] lg:text-[8rem] inline-block -translate-y-2 sm:-translate-y-6">&</span>
               <br className="sm:hidden" />
@@ -100,8 +102,16 @@ export const Hero: React.FC = () => {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-12 sm:mb-16">
             <div className="hidden sm:block h-[1px] w-20 bg-gradient-to-r from-transparent to-brand-gold/40" />
-            <p className="text-[1.1rem] sm:text-2xl font-serif italic text-brand-mocha tracking-wide px-4 text-center max-w-xl leading-relaxed drop-shadow-[0_2px_4px_rgba(255,255,255,0.5)]">
-              Together with our families, we joyfully invite you to join us
+            <p className="text-[1.1rem] sm:text-2xl font-serif italic font-semibold text-brand-mocha tracking-wide px-4 bg-white/60 rounded-2xl py-1 text-center max-w-xl leading-relaxed drop-shadow-[0_2px_4px_rgba(255,255,255,0.5)]">
+              {guestName ? (
+                <>
+                  We cordially invite{' '}
+                  <span className="not-italic font-display font-bold text-brand-mocha whitespace-nowrap">{guestName}</span>{' '}
+                  to celebrate our special day with us
+                </>
+              ) : (
+                'Together with our families, we joyfully invite you to join us'
+              )}
             </p>
             <div className="hidden sm:block h-[1px] w-20 bg-gradient-to-l from-transparent to-brand-gold/40" />
           </div>

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { CheckCircle, Loader2, Heart, Sparkles } from 'lucide-react';
+import { toast } from 'sonner';
+import { submitToSheet } from '../config';
 
 export const RSVPForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -15,13 +17,17 @@ export const RSVPForm: React.FC = () => {
     setStatus('loading');
 
     try {
-      // Simulate network request latency
-      await new Promise(resolve => setTimeout(resolve, 800));
+      await submitToSheet('RSVP', {
+        name: formData.fullName,
+        guests: formData.guests,
+        dietaryNotes: formData.dietaryNotes,
+      });
 
       setStatus('success');
       setFormData({ fullName: '', guests: '1', dietaryNotes: '' });
     } catch (error) {
       console.error('Error sending RSVP: ', error);
+      toast.error('Sorry, we could not save your response. Please try again.');
       setStatus('error');
     }
   };

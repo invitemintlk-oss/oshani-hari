@@ -1,35 +1,41 @@
-const SPREADSHEET_ID = '1jMa12xeTFbfdR5s3NAnYyQT8izPZ-8GAx82X_5i04EE';
+/**
+ * Oshani & Hari - Wedding RSVP / Wishes endpoint
+ * Paste this whole file into Extensions > Apps Script of the Google Sheet,
+ * then Deploy > New deployment > Web app (Execute as: Me, Who has access: Anyone).
+ */
+
+const SPREADSHEET_ID = '1x0P_8m5KvLib1j-0aIdCSKp95gdWfPCwOW4r8V9leko';
+
+const SHEETS = {
+  RSVP: {
+    name: 'RSVP',
+    headers: ['Timestamp', 'Full Name', 'Number of Guests', 'Dietary Notes'],
+    row: (p) => [new Date(), p.name || '', p.guests || '', p.dietaryNotes || ''],
+  },
+  WISH: {
+    name: 'WISH',
+    headers: ['Timestamp', 'Name', 'Message'],
+    row: (p) => [new Date(), p.name || '', p.message || ''],
+  },
+};
 
 function doPost(e) {
+  const lock = LockService.getScriptLock();
   try {
-    const payload = parsePayload_(e);
-    const sheetKey = String(payload.sheet || '').toUpperCase();
+    lock.waitLock(10000);
 
-    if (sheetKey !== 'RSVP' && sheetKey !== 'WISH') {
+    const payload = parsePayload_(e);
+    const key = String(payload.sheet || 'RSVP').toUpperCase();
+    const config = SHEETS[key];
+
+    if (!config) {
       return jsonResponse_({ ok: false, error: 'Invalid sheet. Use RSVP or WISH.' });
     }
 
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    const sheet = getOrCreateSheet_(ss, sheetKey);
-
-    if (sheetKey === 'RSVP') {
-      ensureHeaders_(sheet, ['Timestamp', 'Name', 'Phone', 'Guests', 'Attendance', 'DietaryRestrictions']);
-      sheet.appendRow([
-        new Date(),
-        payload.name || '',
-        payload.phone || payload.email || '',
-        payload.guests || '',
-        payload.attendance || '',
-        payload.dietaryRestrictions || '',
-      ]);
-    } else {
-      ensureHeaders_(sheet, ['Timestamp', 'Name', 'Message']);
-      sheet.appendRow([
-        new Date(),
-        payload.name || '',
-        payload.message || '',
-      ]);
-    }
+    const sheet = getOrCreateSheet_(ss, config.name);
+    ensureHeaders_(sheet, config.headers);
+    sheet.appendRow(config.row(payload));
 
     return jsonResponse_({ ok: true });
   } catch (error) {
@@ -37,31 +43,21 @@ function doPost(e) {
       ok: false,
       error: String(error && error.message ? error.message : error),
     });
+  } finally {
+    lock.releaseLock();
   }
 }
 
 function doGet() {
-  return jsonResponse_({
-    ok: true,
-    message: 'Wedding form endpoint is running.',
-  });
+  return jsonResponse_({ ok: true, message: 'Oshani & Hari wedding endpoint is running.' });
 }
 
 function parsePayload_(e) {
   const params = e && e.parameter ? e.parameter : {};
-
-  if (Object.keys(params).length > 0) {
-    return params;
-  }
+  if (Object.keys(params).length > 0) return params;
 
   const contents = e && e.postData && e.postData.contents ? e.postData.contents : '';
-  if (!contents) {
-    return {};
-  }
-
-  if (contents.indexOf('=') !== -1 && contents.indexOf('{') !== 0) {
-    return parseQueryString_(contents);
-  }
+  if (!contents) return {};
 
   try {
     return JSON.parse(contents);
@@ -70,37 +66,15 @@ function parsePayload_(e) {
   }
 }
 
-function parseQueryString_(query) {
-  const out = {};
-  const pairs = String(query).split('&');
-
-  for (let i = 0; i < pairs.length; i++) {
-    const part = pairs[i];
-    if (!part) continue;
-
-    const idx = part.indexOf('=');
-    const rawKey = idx >= 0 ? part.slice(0, idx) : part;
-    const rawValue = idx >= 0 ? part.slice(idx + 1) : '';
-    const key = decodeURIComponent(rawKey.replace(/\+/g, ' '));
-    const value = decodeURIComponent(rawValue.replace(/\+/g, ' '));
-
-    out[key] = value;
-  }
-
-  return out;
-}
-
 function getOrCreateSheet_(ss, name) {
-  let sheet = ss.getSheetByName(name);
-  if (!sheet) {
-    sheet = ss.insertSheet(name);
-  }
-  return sheet;
+  return ss.getSheetByName(name) || ss.insertSheet(name);
 }
 
 function ensureHeaders_(sheet, headers) {
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(headers);
+    sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold');
+    sheet.setFrozenRows(1);
   }
 }
 
